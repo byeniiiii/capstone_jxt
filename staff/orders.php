@@ -7,8 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id']) && isset(
 
     $order_id = mysqli_real_escape_string($conn, $_POST['order_id']);
 
-    // Update order status to "Pending Downpayment"
-    $updateQuery = "UPDATE orders SET order_status = 'pending_downpayment' WHERE order_id = '$order_id'";
+    // Update order status to "Approved"
+    $updateQuery = "UPDATE orders SET order_status = 'approved' WHERE order_id = '$order_id'";
 
     if (mysqli_query($conn, $updateQuery)) {
         echo "Order approved! Waiting for customer downpayment.";

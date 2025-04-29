@@ -75,6 +75,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Error: " . mysqli_error($conn);
     }
 }
+
+$selected_template_id = $_GET['template_id'] ?? null;
 ?>
 
 <!DOCTYPE html>
@@ -538,6 +540,102 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Add selected class to clicked card
         document.getElementById(type).closest('.type-card').classList.add('selected');
     }
+
+    // Function to show the sublimation form and select template
+function selectSublimationTemplate(templateId) {
+    // First show the sublimation form section
+    document.getElementById('order_type').value = 'sublimation';
+    toggleOrderForms(); // Assuming you have this function to show/hide forms
+    
+    // Then select the template
+    const templateSelect = document.getElementById('template_id');
+    if (templateSelect) {
+        templateSelect.value = templateId;
+        
+        // If you have a change event listener on the template select
+        templateSelect.dispatchEvent(new Event('change'));
+        
+        // Scroll to the form
+        document.getElementById('sublimation_form').scrollIntoView({ behavior: 'smooth' });
+        
+        // Maybe highlight the selected template
+        highlightSelectedTemplate(templateId);
+    }
+}
+
+// Optional: Add visual feedback to show which template is selected
+function highlightSelectedTemplate(templateId) {
+    // If you have a list of templates displayed in the form
+    const templateElements = document.querySelectorAll('.template-option');
+    templateElements.forEach(el => {
+        if (el.dataset.templateId === templateId) {
+            el.classList.add('selected');
+        } else {
+            el.classList.remove('selected');
+        }
+    });
+}
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Check if template_id parameter exists in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateId = urlParams.get('template_id');
+    
+    if (templateId) {
+        // Automatically select sublimation as the order type
+        selectOrderType('sublimation');
+        
+        // Create a hidden input to store the template_id
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'template_id';
+        hiddenInput.value = templateId;
+        
+        // Add it to the form
+        document.querySelector('form').appendChild(hiddenInput);
+    }
+    
+    // Modify form submission to include the template_id when redirecting
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const orderType = document.querySelector('input[name="order_type"]:checked').value;
+        
+        // If sublimation is selected and we have a template_id, prevent default form submission
+        if (orderType === 'sublimation' && templateId) {
+            e.preventDefault();
+            
+            // Get the total amount
+            const totalAmount = document.getElementById('total_amount').value;
+            
+            // Submit the form via AJAX
+            fetch('place_order.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `order_type=sublimation&total_amount=${totalAmount}`
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Extract order_id from the response or from a specific element
+                // This is a simplified approach - you may need to adjust based on your actual response
+                const match = html.match(/order_id=([A-Z0-9]+)/);
+                if (match && match[1]) {
+                    const orderId = match[1];
+                    // Redirect to sublimation_order_request.php with both order_id and template_id
+                    window.location.href = `sublimation_order_request.php?order_id=${orderId}&template_id=${templateId}`;
+                } else {
+                    // Fallback if order_id cannot be extracted
+                    window.location.href = 'sublimation_order_request.php?' + new URLSearchParams(html).toString();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // If error, submit the form normally
+                this.submit();
+            });
+        }
+    });
+});
     </script>
 </body>
 </html>
