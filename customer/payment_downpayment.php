@@ -15,15 +15,31 @@ $error_message = '';
 $success_message = '';
 $payment_id = 0; // Will store the ID of the created payment
 
-// Fetch all staff members for the dropdown
-$staff_query = "SELECT user_id, CONCAT(first_name, ' ', last_name) AS staff_name 
-                FROM users 
-                WHERE role IN ('Admin', 'Manager', 'Staff')
-                ORDER BY first_name, last_name";
-$staff_result = $conn->query($staff_query);
-$staff_members = [];
-while ($staff = $staff_result->fetch_assoc()) {
-    $staff_members[] = $staff;
+// Get the manager information instead of all staff members
+$manager_query = "SELECT user_id, CONCAT(first_name, ' ', last_name) AS staff_name 
+                 FROM users 
+                 WHERE role = 'Manager'
+                 LIMIT 1";
+$manager_result = $conn->query($manager_query);
+
+if ($manager_result->num_rows > 0) {
+    $manager = $manager_result->fetch_assoc();
+} else {
+    // Fallback to any admin if no manager is found
+    $manager_query = "SELECT user_id, CONCAT(first_name, ' ', last_name) AS staff_name 
+                     FROM users 
+                     WHERE role = 'Admin'
+                     LIMIT 1";
+    $manager_result = $conn->query($manager_query);
+    $manager = $manager_result->fetch_assoc();
+}
+
+// If still no manager or admin found, create a default value
+if (empty($manager)) {
+    $manager = [
+        'user_id' => 1, // Default admin/manager ID
+        'staff_name' => 'Store Manager' // Default name
+    ];
 }
 
 // Validate order ID
@@ -112,9 +128,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($error_message)) {
             $payment_id = $conn->insert_id;
             
             // Update order payment status - Only if the entire payment process was successful
-            $status = ($amount_paid >= $order['total_amount']) ? 'fully_paid' : 'downpayment_paid';
-            $stmt = $conn->prepare("UPDATE orders SET payment_status = ? WHERE order_id = ?");
-            $stmt->bind_param("ss", $status, $order_id);
+            $payment_status = ($amount_paid >= $order['total_amount']) ? 'fully_paid' : 'downpayment_paid';
+            $order_status = 'in_process'; // Automatically set to in_process when payment is made
+
+            // Update both payment status and order status in a single query
+            $stmt = $conn->prepare("UPDATE orders SET payment_status = ?, order_status = ? WHERE order_id = ?");
+            $stmt->bind_param("sss", $payment_status, $order_status, $order_id);
             $stmt->execute();
             
             // Commit transaction
@@ -743,9 +762,7 @@ if ($payment_id > 0) {
                                 <label for="received_by" class="form-label">Payment Received By <span class="text-danger">*</span></label>
                                 <select class="form-select staff-select" id="received_by" name="received_by" required>
                                     <option value="">Select Staff Member</option>
-                                    <?php foreach ($staff_members as $staff): ?>
-                                    <option value="<?php echo $staff['user_id']; ?>"><?php echo htmlspecialchars($staff['staff_name']); ?></option>
-                                    <?php endforeach; ?>
+                                    <option value="<?php echo $manager['user_id']; ?>"><?php echo htmlspecialchars($manager['staff_name']); ?></option>
                                 </select>
                                 <div class="form-text">Select the staff member who received this payment.</div>
                             </div>

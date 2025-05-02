@@ -374,7 +374,7 @@ $selected_template_id = $_GET['template_id'] ?? null;
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center py-3">
                         <h4 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Place an Order</h4>
-                        <a href="home.php" class="btn btn-light btn-sm"><i class="fas fa-arrow-left me-1"></i> Back</a>
+                        <a href="index.php" class="btn btn-light btn-sm"><i class="fas fa-arrow-left me-1"></i> Back</a>
                     </div>
                     <div class="card-body p-4">
                         <form action="place_order.php" method="POST" class="needs-validation" novalidate>

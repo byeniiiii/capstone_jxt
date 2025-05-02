@@ -276,98 +276,91 @@ while ($row = mysqli_fetch_assoc($count_result)) {
             max-width: 300px;
         }
         
-        /* Add these responsive styles to your existing styles */
-        /* Responsive table improvements */
-        .table-responsive {
-            overflow-x: visible; /* Change from auto to visible */
-        }
+        /* Add these styles to your existing CSS */
         
-        /* Responsive columns that adjust based on screen size */
-        .table th, .table td {
-            white-space: normal;
+        /* Improved table styling */
+        .table td, .table th {
+            padding: 1rem;
             vertical-align: middle;
         }
         
-        /* Column specific widths */
-        .col-id { width: 8%; min-width: 80px; }
-        .col-type { width: 10%; min-width: 90px; }
-        .col-customer { width: 15%; min-width: 130px; }
-        .col-total { width: 8%; min-width: 80px; }
-        .col-payment { width: 10%; min-width: 90px; }
-        .col-status { width: 12%; min-width: 110px; }
-        .col-created { width: 10%; min-width: 90px; }
-        .col-completion { width: 12%; min-width: 110px; }
-        .col-actions { width: 10%; min-width: 90px; }
-        
-        /* Text truncation for long content */
-        .text-truncate-custom {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-            display: block;
+        /* Card view for mobile devices */
+        .order-card-mobile {
+            display: none;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 4px solid #4e73df;
         }
         
-        /* Responsive filters section */
-        @media (max-width: 768px) {
-            .filters-row > div {
-                margin-bottom: 1rem;
+        .order-card-mobile .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #e3e6f0;
+        }
+        
+        .order-card-mobile .card-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .order-card-mobile .card-label {
+            font-weight: 600;
+            color: #5a5c69;
+            flex: 1;
+        }
+        
+        .order-card-mobile .card-value {
+            flex: 2;
+            text-align: right;
+        }
+        
+        /* Status and payment badges */
+        .status-badge, .payment-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        /* Action dropdown improvements */
+        .dropdown-menu {
+            min-width: 200px;
+        }
+        
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .table-container {
+                padding: 0;
             }
             
             .table-responsive {
-                font-size: 0.9rem;
-            }
-        }
-        
-        /* Pill tabs scrolling container */
-        .nav-pills-wrapper {
-            overflow-x: auto;
-            white-space: nowrap;
-            padding-bottom: 5px; /* Space for scrollbar */
-            margin-bottom: 1rem;
-            -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
-            scrollbar-width: none; /* Hide scrollbar in Firefox */
-        }
-        
-        .nav-pills-wrapper::-webkit-scrollbar {
-            display: none; /* Hide scrollbar in Chrome/Safari */
-        }
-        
-        .nav-pills-wrapper .nav-pills {
-            display: inline-flex;
-            padding-bottom: 5px;
-        }
-        
-        /* Additional responsive card styles */
-        .card {
-            overflow: hidden;
-        }
-        
-        /* Responsive buttons */
-        .btn-responsive {
-            padding: 0.375rem 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        @media (max-width: 576px) {
-            .dropdown-menu {
-                position: fixed !important;
-                top: auto !important;
-                right: 0 !important;
-                left: 0 !important;
-                width: 100%;
-                transform: none !important;
-                bottom: 0;
-                margin: 0;
-                border-radius: 1rem 1rem 0 0;
-                max-height: 70vh;
-                overflow-y: auto;
-                padding-bottom: 1rem;
-                box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+                border: none;
             }
             
-            .dropdown-item {
-                padding: 0.75rem 1.5rem;
+            /* Hide table on mobile */
+            .orders-table {
+                display: none;
+            }
+            
+            /* Show card view instead */
+            .order-card-mobile {
+                display: block;
+            }
+            
+            /* Make dropdown wider on mobile */
+            .dropdown-menu {
+                min-width: 240px;
             }
         }
     </style>
@@ -423,7 +416,6 @@ while ($row = mysqli_fetch_assoc($count_result)) {
                                         <label class="input-group-text" for="status">Status</label>
                                         <select class="form-select" name="status" id="status" onchange="this.form.submit()">
                                             <option value="all" <?php echo $status_filter == 'all' ? 'selected' : ''; ?>>All Statuses</option>
-                                            <option value="pending_approval" <?php echo $status_filter == 'pending_approval' ? 'selected' : ''; ?>>Pending Approval</option>
                                             <option value="approved" <?php echo $status_filter == 'approved' ? 'selected' : ''; ?>>Approved</option>
                                             <option value="in_process" <?php echo $status_filter == 'in_process' ? 'selected' : ''; ?>>In Process</option>
                                             <option value="ready_for_pickup" <?php echo $status_filter == 'ready_for_pickup' ? 'selected' : ''; ?>>Ready</option>
@@ -448,11 +440,6 @@ while ($row = mysqli_fetch_assoc($count_result)) {
                             <li class="nav-item">
                                 <a class="nav-link <?php echo $status_filter == 'all' ? 'active' : ''; ?>" href="?status=all">
                                     All <span class="badge bg-secondary"><?php echo $status_counts['all']; ?></span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link <?php echo $status_filter == 'pending_approval' ? 'active' : ''; ?>" href="?status=pending_approval">
-                                    Pending <span class="badge bg-warning text-dark"><?php echo $status_counts['pending_approval']; ?></span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -549,6 +536,7 @@ while ($row = mysqli_fetch_assoc($count_result)) {
                                                         </span>
                                                     </td>
                                                     <td>
+                                                    
                                                         <?php
                                                         $status_class = '';
                                                         switch ($order['order_status']) {
@@ -745,344 +733,391 @@ while ($row = mysqli_fetch_assoc($count_result)) {
     </div>
     
     <!-- Status Update Modal -->
-    <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Update Order Status</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="statusUpdateForm">
-                        <input type="hidden" name="order_id" id="status_order_id">
-                        <div class="mb-3">
-                            <label for="order_status" class="form-label">Status</label>
-                            <select class="form-select" id="order_status" name="order_status" required>
-                                <option value="pending_approval">Pending Approval</option>
-                                <option value="approved">Approved</option>
-                                <option value="in_process">In Process</option>
-                                <option value="ready_for_pickup">Ready for Pickup</option>
-                                <option value="completed">Completed</option>
-                                <option value="declined">Declined</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="status_notes" class="form-label">Notes (Optional)</label>
-                            <textarea class="form-control" id="status_notes" name="notes" rows="3"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="updateStatusBtn">Update Status</button>
-                </div>
+<div class="modal fade" id="statusUpdateModal" tabindex="-1" role="dialog" aria-labelledby="statusUpdateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="statusUpdateModalLabel">Update Order Status</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="statusUpdateForm">
+                    <input type="hidden" id="modal_order_id" name="order_id">
+                    <input type="hidden" id="modal_status" name="status">
+                    
+                    <div class="form-group">
+                        <label for="notes">Notes (Optional)</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter any notes about this status change"></textarea>
+                    </div>
+                    
+                    <div id="statusConfirmationText" class="alert alert-info mt-3"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" id="confirmStatusUpdate" class="btn btn-primary">Confirm</button>
             </div>
         </div>
     </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Handle Ready for Pickup button
+    $('.ready-btn').click(function(e) {
+        e.preventDefault();
+        const orderId = $(this).data('id');
+        console.log('Clicked ready button for order:', orderId);
+        
+        // Set modal values
+        $('#modal_order_id').val(orderId);
+        $('#modal_status').val('ready_for_pickup');
+        $('#statusConfirmationText').html('Are you sure you want to mark this order as <strong>Ready for Pickup</strong>?');
+        $('#statusConfirmationText').removeClass().addClass('alert alert-info');
+        
+        // Show modal
+        $('#statusUpdateModal').modal('show');
+    });
     
-    <!-- Decline Order Modal -->
-    <div class="modal fade" id="declineModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Decline Order</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="declineForm">
-                        <input type="hidden" name="order_id" id="decline_order_id">
-                        <div class="mb-3">
-                            <label for="decline_reason" class="form-label">Reason for Declining</label>
-                            <textarea class="form-control" id="decline_reason" name="reason" rows="3" required></textarea>
-                            <div class="form-text">This reason will be visible to the customer.</div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeclineBtn">Decline Order</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    // Handle Mark Completed button
+    $('.complete-btn').click(function(e) {
+        e.preventDefault();
+        const orderId = $(this).data('id');
+        
+        // Set modal values
+        $('#modal_order_id').val(orderId);
+        $('#modal_status').val('completed');
+        $('#statusConfirmationText').html('Are you sure you want to mark this order as <strong>Completed</strong>? This indicates the customer has picked up the order.');
+        $('#statusConfirmationText').removeClass().addClass('alert alert-success');
+        
+        // Show modal
+        $('#statusUpdateModal').modal('show');
+    });
     
-    <!-- Add Note Modal -->
-    <div class="modal fade" id="addNoteModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add Note to Order</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addNoteForm">
-                        <input type="hidden" name="order_id" id="note_order_id">
-                        <div class="mb-3">
-                            <label for="note_content" class="form-label">Note</label>
-                            <textarea class="form-control" id="note_content" name="note" rows="4" required></textarea>
-                            <div class="form-text">This note will only be visible to staff members.</div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="addNoteBtn">Add Note</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    // Handle Cancel Order button
+    $('.cancel-btn').click(function(e) {
+        e.preventDefault();
+        const orderId = $(this).data('id');
+        
+        // Set modal values
+        $('#modal_order_id').val(orderId);
+        $('#modal_status').val('cancelled');
+        $('#statusConfirmationText').html('Are you sure you want to <strong>Cancel</strong> this order? This action cannot be undone.');
+        $('#statusConfirmationText').removeClass().addClass('alert alert-danger');
+        
+        // Show modal
+        $('#statusUpdateModal').modal('show');
+    });
+    
+    // Handle status update confirmation
+    $('#confirmStatusUpdate').click(function() {
+        // Get form data directly to ensure all fields are included
+        const orderId = $('#modal_order_id').val();
+        const status = $('#modal_status').val();
+        const notes = $('#notes').val();
+        
+        // Log the data to console for debugging
+        console.log('Sending data:', { order_id: orderId, status: status, notes: notes });
+        
+        // Create the data object explicitly
+        const data = {
+            order_id: orderId,
+            status: status,
+            notes: notes
+        };
+        
+        // Show loading state
+        $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+        $(this).prop('disabled', true);
+        
+        // Send AJAX request with explicitly defined data
+        $.ajax({
+            url: 'update_order_status.php',
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            success: function(response) {
+                console.log('Success response:', response);
+                if (response.status === 'success') {
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Status Updated',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        // Reload page to reflect changes
+                        location.reload();
+                    });
+                } else {
+                    // Show error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message || 'An error occurred while updating the status.',
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('Error response:', xhr.responseText);
+                // Show error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while processing your request.',
+                });
+            },
+            complete: function() {
+                // Reset button state
+                $('#confirmStatusUpdate').html('Confirm');
+                $('#confirmStatusUpdate').prop('disabled', false);
+                
+                // Close modal
+                $('#statusUpdateModal').modal('hide');
+            }
+        });
+    });
+});
+
+// Add this debug code to your markReady function
+function markReady(orderId) {
+    console.log("Marking order " + orderId + " as ready for pickup");
+    
+    Swal.fire({
+        title: 'Mark as Ready for Pickup?',
+        text: "This will notify the customer that their order is ready for pickup.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, mark as ready'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading state
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Updating order status',
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false
+            });
+            
+            // Send AJAX request
+            const formData = new FormData();
+            formData.append('order_id', orderId);
+            formData.append('status', 'ready_for_pickup'); // Ensure this exact string is sent
+            formData.append('notes', 'Order marked as ready for pickup');
+            
+            console.log("Sending data:", {
+                order_id: orderId,
+                status: 'ready_for_pickup',
+                notes: 'Order marked as ready for pickup'
+            });
+            
+            $.ajax({
+                url: 'update_order_status.php',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log("Response received:", response);
+                    
+                    try {
+                        // Try to parse response as JSON
+                        const data = typeof response === 'string' ? JSON.parse(response) : response;
+                        
+                        if (data.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Status Updated!',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'An error occurred while updating status.'
+                            });
+                        }
+                    } catch(e) {
+                        console.error("Error parsing response:", e);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Unexpected server response: ' + response
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX error:", xhr.responseText);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Server error: ' + error
+                    });
+                }
+            });
+        }
+    });
+}
+</script>
 
     <!-- Bootstrap & jQuery Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        $(document).ready(function() {
-            // Edit status button
-            $('.edit-status-btn').click(function(e) {
-                e.preventDefault();
-                const orderId = $(this).data('id');
-                const currentStatus = $(this).data('status');
-                
-                $('#status_order_id').val(orderId);
-                $('#order_status').val(currentStatus);
-                
-                const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
-                statusModal.show();
-            });
+    $(document).ready(function() {
+        // Edit status button
+        $('.edit-status-btn').click(function(e) {
+            e.preventDefault();
+            const orderId = $(this).data('id');
+            const currentStatus = $(this).data('status');
             
-            // Update status action
-            $('#updateStatusBtn').click(function() {
-                const orderId = $('#status_order_id').val();
-                const status = $('#order_status').val();
-                const notes = $('#status_notes').val();
-                
-                // Make AJAX call to update status
+            $('#status_order_id').val(orderId);
+            $('#order_status').val(currentStatus);
+            
+            const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
+            statusModal.show();
+        });
+        
+        // Approve button - using direct AJAX, not the status modal
+        $('.approve-btn').click(function(e) {
+            e.preventDefault();
+            const orderId = $(this).data('id');
+            
+            if (confirm('Are you sure you want to approve this order?')) {
                 $.ajax({
                     url: 'update_order_status.php',
                     type: 'POST',
                     data: {
                         order_id: orderId,
-                        status: status,
-                        notes: notes
+                        status: 'approved',
+                        notes: 'Order approved by staff.'
                     },
                     success: function(response) {
                         if (response === 'success') {
-                            // Reload page to show updated status
                             location.reload();
                         } else {
-                            alert('Error updating order status: ' + response);
-                        }
-                    },
-                    error: function() {
-                        alert('An error occurred while updating the order status.');
-                    }
-                });
-            });
-            
-            // Approve button
-            $('.approve-btn').click(function(e) {
-                e.preventDefault();
-                const orderId = $(this).data('id');
-                
-                if (confirm('Are you sure you want to approve this order?')) {
-                    $.ajax({
-                        url: 'update_order_status.php',
-                        type: 'POST',
-                        data: {
-                            order_id: orderId,
-                            status: 'approved',
-                            notes: 'Order approved by staff.'
-                        },
-                        success: function(response) {
-                            if (response === 'success') {
-                                location.reload();
-                            } else {
-                                alert('Error approving order: ' + response);
-                            }
-                        }
-                    });
-                }
-            });
-            
-            // Decline button
-            $('.decline-btn').click(function(e) {
-                e.preventDefault();
-                const orderId = $(this).data('id');
-                
-                $('#decline_order_id').val(orderId);
-                
-                const declineModal = new bootstrap.Modal(document.getElementById('declineModal'));
-                declineModal.show();
-            });
-            
-            // Confirm decline action
-            $('#confirmDeclineBtn').click(function() {
-                const orderId = $('#decline_order_id').val();
-                const reason = $('#decline_reason').val();
-                
-                if (!reason.trim()) {
-                    alert('Please provide a reason for declining the order.');
-                    return;
-                }
-                
-                $.ajax({
-                    url: 'decline_order.php',
-                    type: 'POST',
-                    data: {
-                        order_id: orderId,
-                        reason: reason
-                    },
-                    success: function(response) {
-                        if (response.includes('declined')) {
-                            location.reload();
-                        } else {
-                            alert('Error declining order: ' + response);
+                            alert('Error approving order: ' + response);
                         }
                     }
                 });
-            });
+            }
+        });
+        
+        // Decline button
+        $('.decline-btn').click(function(e) {
+            e.preventDefault();
+            const orderId = $(this).data('id');
             
-            // Process button
-            $('.process-btn').click(function(e) {
-                e.preventDefault();
-                const orderId = $(this).data('id');
-                
-                if (confirm('Mark this order as In Process?')) {
-                    $.ajax({
-                        url: 'update_order_status.php',
-                        type: 'POST',
-                        data: {
-                            order_id: orderId,
-                            status: 'in_process',
-                            notes: 'Order moved to production.'
-                        },
-                        success: function(response) {
-                            if (response === 'success') {
-                                location.reload();
-                            } else {
-                                alert('Error updating order: ' + response);
-                            }
-                        }
-                    });
-                }
-            });
+            $('#decline_order_id').val(orderId);
             
-            // Ready button
-            $('.ready-btn').click(function(e) {
-                e.preventDefault();
-                const orderId = $(this).data('id');
-                
-                if (confirm('Mark this order as Ready for Pickup?')) {
-                    $.ajax({
-                        url: 'update_order_status.php',
-                        type: 'POST',
-                        data: {
-                            order_id: orderId,
-                            status: 'ready_for_pickup',
-                            notes: 'Order is ready for pickup.'
-                        },
-                        success: function(response) {
-                            if (response === 'success') {
-                                location.reload();
-                            } else {
-                                alert('Error updating order: ' + response);
-                            }
-                        }
-                    });
-                }
-            });
+            const declineModal = new bootstrap.Modal(document.getElementById('declineModal'));
+            declineModal.show();
+        });
+        
+        // Process button - using direct AJAX
+        $('.process-btn').click(function(e) {
+            e.preventDefault();
+            const orderId = $(this).data('id');
             
-            // Complete button
-            $('.complete-btn').click(function(e) {
-                e.preventDefault();
-                const orderId = $(this).data('id');
-                
-                if (confirm('Mark this order as Completed?')) {
-                    $.ajax({
-                        url: 'update_order_status.php',
-                        type: 'POST',
-                        data: {
-                            order_id: orderId,
-                            status: 'completed',
-                            notes: 'Order has been picked up/delivered and is now complete.'
-                        },
-                        success: function(response) {
-                            if (response === 'success') {
-                                location.reload();
-                            } else {
-                                alert('Error updating order: ' + response);
-                            }
-                        }
-                    });
-                }
-            });
-            
-            // Mark as paid button
-            $('.mark-paid-btn').click(function(e) {
-                e.preventDefault();
-                const orderId = $(this).data('id');
-                
-                if (confirm('Mark this order as fully paid?')) {
-                    $.ajax({
-                        url: 'update_payment_status.php',
-                        type: 'POST',
-                        data: {
-                            order_id: orderId,
-                            status: 'paid',
-                            notes: 'Payment has been completed.'
-                        },
-                        success: function(response) {
-                            if (response === 'success') {
-                                location.reload();
-                            } else {
-                                alert('Error updating payment: ' + response);
-                            }
-                        }
-                    });
-                }
-            });
-            
-            // Add note button
-            $('.add-note-btn').click(function(e) {
-                e.preventDefault();
-                const orderId = $(this).data('id');
-                
-                $('#note_order_id').val(orderId);
-                
-                const noteModal = new bootstrap.Modal(document.getElementById('addNoteModal'));
-                noteModal.show();
-            });
-            
-            // Add note action
-            $('#addNoteBtn').click(function() {
-                const orderId = $('#note_order_id').val();
-                const note = $('#note_content').val();
-                
-                if (!note.trim()) {
-                    alert('Please enter a note.');
-                    return;
-                }
-                
+            if (confirm('Mark this order as In Process?')) {
                 $.ajax({
-                    url: 'add_order_note.php',
+                    url: 'update_order_status.php',
                     type: 'POST',
                     data: {
                         order_id: orderId,
-                        note: note
+                        status: 'in_process',
+                        notes: 'Order moved to production.'
                     },
                     success: function(response) {
                         if (response === 'success') {
-                            alert('Note added successfully.');
-                            const noteModal = bootstrap.Modal.getInstance(document.getElementById('addNoteModal'));
-                            noteModal.hide();
+                            location.reload();
                         } else {
-                            alert('Error adding note: ' + response);
+                            alert('Error updating order: ' + response);
                         }
                     }
                 });
+            }
+        });
+        
+        // Mark as paid button
+        $('.mark-paid-btn').click(function(e) {
+            e.preventDefault();
+            const orderId = $(this).data('id');
+            
+            if (confirm('Mark this order as fully paid?')) {
+                $.ajax({
+                    url: 'update_payment_status.php',
+                    type: 'POST',
+                    data: {
+                        order_id: orderId,
+                        status: 'paid',
+                        notes: 'Payment has been completed.'
+                    },
+                    success: function(response) {
+                        if (response === 'success') {
+                            location.reload();
+                        } else {
+                            alert('Error updating payment: ' + response);
+                        }
+                    }
+                });
+            }
+        });
+        
+        // Add note button
+        $('.add-note-btn').click(function(e) {
+            e.preventDefault();
+            const orderId = $(this).data('id');
+            
+            $('#note_order_id').val(orderId);
+            
+            const noteModal = new bootstrap.Modal(document.getElementById('addNoteModal'));
+            noteModal.show();
+        });
+        
+        // Add note action
+        $('#addNoteBtn').click(function() {
+            const orderId = $('#note_order_id').val();
+            const note = $('#note_content').val();
+            
+            if (!note.trim()) {
+                alert('Please enter a note.');
+                return;
+            }
+            
+            $.ajax({
+                url: 'add_order_note.php',
+                type: 'POST',
+                data: {
+                    order_id: orderId,
+                    note: note
+                },
+                success: function(response) {
+                    if (response === 'success') {
+                        alert('Note added successfully.');
+                        const noteModal = bootstrap.Modal.getInstance(document.getElementById('addNoteModal'));
+                        noteModal.hide();
+                    } else {
+                        alert('Error adding note: ' + response);
+                    }
+                }
             });
         });
+    });
     </script>
 </body>
 </html>

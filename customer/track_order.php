@@ -794,21 +794,29 @@ $result = mysqli_stmt_get_result($stmt);
                                             <td><?= htmlspecialchars(ucfirst($row['order_type'])) ?></td>
                                             <td><?= date('M j, Y', strtotime($row['created_at'])) ?></td>
                                             <td>
-                                                <button class="btn view-btn" onclick="openModal(
-                                                    '<?= htmlspecialchars($row['order_id']) ?>', 
-                                                    '<?= number_format($row['total_amount'], 2) ?>', 
-                                                    '<?= number_format($row['downpayment_amount'], 2) ?>', 
-                                                    '<?= htmlspecialchars($row['payment_method']) ?>', 
-                                                    '<?= htmlspecialchars($row['payment_status']) ?>', 
-                                                    '<?= date('F j, Y, g:i a', strtotime($row['created_at'])) ?>', 
-                                                    '<?= date('F j, Y', strtotime($row['completion_date'])) ?>', 
-                                                    '<?= $row['custom_design'] ? "Custom Design" : "Template" ?>', 
-                                                    '<?= htmlspecialchars($row['printing_type']) ?>', 
-                                                    '<?= htmlspecialchars($row['quantity']) ?>', 
-                                                    '<?= htmlspecialchars($row['size']) ?>', 
-                                                    '<?= htmlspecialchars($row['color']) ?>', 
-                                                    '<?= htmlspecialchars($row['instructions']) ?>'
-                                                )">View Details</button>
+                                                <div class="d-flex gap-2">
+                                                    <button class="btn view-btn" onclick="openModal(
+                                                        '<?= htmlspecialchars($row['order_id']) ?>', 
+                                                        '<?= number_format($row['total_amount'], 2) ?>', 
+                                                        '<?= number_format($row['downpayment_amount'], 2) ?>', 
+                                                        '<?= htmlspecialchars($row['payment_method']) ?>', 
+                                                        '<?= htmlspecialchars($row['payment_status']) ?>', 
+                                                        '<?= date('F j, Y, g:i a', strtotime($row['created_at'])) ?>', 
+                                                        '<?= date('F j, Y', strtotime($row['completion_date'])) ?>', 
+                                                        '<?= $row['custom_design'] ? "Custom Design" : "Template" ?>', 
+                                                        '<?= htmlspecialchars($row['printing_type']) ?>', 
+                                                        '<?= htmlspecialchars($row['quantity']) ?>', 
+                                                        '<?= htmlspecialchars($row['size']) ?>', 
+                                                        '<?= htmlspecialchars($row['color']) ?>', 
+                                                        '<?= htmlspecialchars($row['instructions']) ?>'
+                                                    )">View Details</button>
+                                                    
+                                                    <!-- Add Cancel Order Button -->
+                                                    <button class="btn btn-danger cancel-order-btn" 
+                                                            data-order-id="<?= htmlspecialchars($row['order_id']) ?>">
+                                                        <i class="fas fa-times-circle me-1"></i> Cancel Order
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

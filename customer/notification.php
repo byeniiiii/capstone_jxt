@@ -232,7 +232,7 @@ $unread_stmt->close();
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
             <div class="d-flex align-items-center">
-                <a href="home.php" class="me-2">
+                <a href="index.php" class="me-2">
                     <img src="../image/logo.png" height="40" alt="JX Tailoring Logo">
                 </a>
                 <span class="navbar-brand mb-0">Notifications</span>
@@ -255,7 +255,7 @@ $unread_stmt->close();
         <div class="offcanvas-body">
             <ul class="navbar-nav">
                 <li class="nav-item mb-1">
-                    <a class="nav-link" href="home.php"><i class="fas fa-home"></i> Home</a>
+                    <a class="nav-link" href="index.php"><i class="fas fa-home"></i> Home</a>
                 </li>
                 <li class="nav-item mb-1">
                     <a class="nav-link" href="place_order.php"><i class="fas fa-clipboard-list"></i> Place Order</a>
@@ -288,7 +288,7 @@ $unread_stmt->close();
             </div>
             <div>
                 <!-- Back to Home button -->
-                <a href="home.php" class="btn btn-outline-primary me-2">
+                <a href="index.php" class="btn btn-outline-primary me-2">
                     <i class="fas fa-home me-1"></i> Back to Home
                 </a>
                 
@@ -368,7 +368,7 @@ $unread_stmt->close();
                 <i class="fas fa-bell-slash fa-3x"></i>
                 <h4>No Notifications Yet</h4>
                 <p class="text-muted">You don't have any notifications at the moment.</p>
-                <a href="home.php" class="btn btn-primary mt-3">
+                <a href="index.php" class="btn btn-primary mt-3">
                     <i class="fas fa-home me-1"></i> Back to Home
                 </a>
             </div>
@@ -378,7 +378,7 @@ $unread_stmt->close();
     <!-- Mobile Bottom Navigation -->
     <nav class="mobile-bottom-nav d-block d-lg-none">
         <div class="mobile-bottom-nav__item">
-            <a href="home.php" class="mobile-bottom-nav__item-link">
+            <a href="index.php" class="mobile-bottom-nav__item-link">
                 <i class="fas fa-home"></i>
                 <span>Home</span>
             </a>

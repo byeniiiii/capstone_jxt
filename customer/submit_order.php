@@ -44,7 +44,7 @@
     <h2 class="text-success">✅ Order Submitted Successfully!</h2>
     <p>Your order is now <strong>Awaiting Approval</strong>.</p>
 
-    <a href="home.php" class="btn-home">🏠 Go Back Home</a>
+    <a href="index.php" class="btn-home">🏠 Go Back Home</a>
 </div>
 
 </body>

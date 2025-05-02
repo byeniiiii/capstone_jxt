@@ -1,27 +1,26 @@
 <?php
-$current_page = basename($_SERVER['PHP_SELF']); // Get the current file name
+// filepath: c:\xampp\htdocs\jx_tailoring\manager\sidebar.php
+
+// Determine which page is currently active
+$currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
 <!-- Sidebar -->
-<ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar">
-    <!-- Sidebar Toggle Button (Always Visible on Mobile) -->
-<button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3" onclick="toggleSidebar()"> 
-    <i class="fa fa-bars"></i>
-</button>
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
-        <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-laugh-wink"></i>
+        <div class="sidebar-brand-icon">
+            <i class="fas fa-scissors"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">Tailoring<sup>mgt</sup></div>
+        <div class="sidebar-brand-text mx-3">JX Tailoring</div>
     </a>
 
     <!-- Divider -->
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item <?= ($current_page == 'dashboard.php') ? 'active' : ''; ?>">
+    <li class="nav-item <?php echo ($currentPage == 'dashboard.php') ? 'active' : ''; ?>">
         <a class="nav-link" href="dashboard.php">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span>
@@ -32,26 +31,31 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current file name
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    <div class="sidebar-heading">Management</div>
+    <div class="sidebar-heading">
+        Order Management
+    </div>
 
-    <li class="nav-item <?= ($current_page == 'orders.php') ? 'active' : ''; ?>">
+    <!-- Nav Item - Orders -->
+    <li class="nav-item <?php echo (in_array($currentPage, ['orders.php', 'view_order.php'])) ? 'active' : ''; ?>">
         <a class="nav-link" href="orders.php">
-            <i class="fas fa-shopping-bag"></i>
+            <i class="fas fa-fw fa-clipboard-list"></i>
+            <span>New Orders</span>
+        </a>
+    </li>
+
+    <!-- Nav Item - Manage Orders -->
+    <li class="nav-item <?php echo ($currentPage == 'manage_orders.php') ? 'active' : ''; ?>">
+        <a class="nav-link" href="manage_orders.php">
+            <i class="fas fa-fw fa-tasks"></i>
             <span>Manage Orders</span>
         </a>
     </li>
-    
-    <li class="nav-item <?= ($current_page == 'manage_payments.php') ? 'active' : ''; ?>">
-        <a class="nav-link" href="manage_payments.php">
-            <i class="fas fa-money-bill-wave"></i>
-            <span>Manage Payments</span>
-        </a>
-    </li>
 
-    <li class="nav-item <?= ($current_page == 'sublimator.php') ? 'active' : ''; ?>">
-        <a class="nav-link" href="templates.php">
-            <i class="fas fa-user-friends"></i>
-            <span>Manage Templates</span>
+    <!-- Nav Item - Payments -->
+    <li class="nav-item <?php echo ($currentPage == 'manage_payments.php') ? 'active' : ''; ?>">
+        <a class="nav-link" href="manage_payments.php">
+            <i class="fas fa-fw fa-cash-register"></i>
+            <span>Manage Payments</span>
         </a>
     </li>
 
@@ -59,73 +63,47 @@ $current_page = basename($_SERVER['PHP_SELF']); // Get the current file name
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    <div class="sidebar-heading">Transaction</div>
+    <div class="sidebar-heading">
+        Management
+    </div>
 
-    <li class="nav-item <?= ($current_page == 'order_reports.php') ? 'active' : ''; ?>">
-        <a class="nav-link" href="order_reports.php">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Order Report</span>
+    <!-- Nav Item - Staff -->
+    <li class="nav-item <?php echo ($currentPage == 'staff.php') ? 'active' : ''; ?>">
+        <a class="nav-link" href="staff.php">
+            <i class="fas fa-fw fa-user-tie"></i>
+            <span>Staff Management</span>
         </a>
     </li>
 
-    <li class="nav-item <?= ($current_page == 'sales_report.php') ? 'active' : ''; ?>">
-        <a class="nav-link" href="sales_report.php">
-            <i class="fas fa-history"></i>
-            <span>Transaction History</span>
+    <!-- Nav Item - Reports Collapse Menu -->
+    <li class="nav-item <?php echo (in_array($currentPage, ['sales_report.php', 'order_report.php'])) ? 'active' : ''; ?>">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReports" aria-expanded="true" aria-controls="collapseReports">
+            <i class="fas fa-fw fa-chart-bar"></i>
+            <span>Reports</span>
         </a>
+        <div id="collapseReports" class="collapse" aria-labelledby="headingReports" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Report Types:</h6>
+                <a class="collapse-item" href="sales_report.php">Sales Report</a>
+                <a class="collapse-item" href="order_report.php">Order Report</a>
+            </div>
+        </div>
     </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Settings
+    </div>
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 
-    <!-- Nav Item - Log Out -->
-    <li class="nav-item">
-        <a class="nav-link" href="logout.php">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Log Out</span>
-        </a>
-    </li>
-
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
 </ul>
-
-<!-- JavaScript -->
-<script>
-    function toggleSidebar() {
-        const sidebar = document.getElementById('accordionSidebar');
-        sidebar.classList.toggle('toggled');
-
-        const burgerMenu = document.getElementById('sidebarToggleTop');
-
-        if (sidebar.classList.contains('toggled')) {
-            // Sidebar is closed, show burger menu at the top
-            burgerMenu.style.position = 'fixed';
-            burgerMenu.style.top = '10px';
-            burgerMenu.style.left = '10px';
-            burgerMenu.style.zIndex = '1050'; // Ensure it's above everything
-        } else {
-            // Sidebar is open, reset burger menu position
-            burgerMenu.style.position = 'fixed';
-            burgerMenu.style.top = '10px';
-            burgerMenu.style.left = '120px';
-            burgerMenu.style.zIndex = '1050'; // Ensure it's above everything
-        }
-    }
-</script>
-
-<!-- CSS -->
-<style>
-    /* Sidebar Toggle Behavior */
-    .sidebar.toggled {
-        width: 0;
-        overflow: hidden;
-    }
-
-    .sidebar {
-        transition: all 0.3s ease;
-    }
-
-    /* Fix Burger Menu Position */
-    #sidebarToggleTop {
-        transition: all 0.3s ease;
-    }
-</style>
+<!-- End of Sidebar -->

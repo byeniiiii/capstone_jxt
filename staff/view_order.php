@@ -37,13 +37,6 @@ if (mysqli_num_rows($order_result) == 0) {
 
 $order = mysqli_fetch_assoc($order_result);
 
-// Get order items if applicable (depends on your database structure)
-$items_query = "SELECT * FROM orders WHERE order_id = ?";
-$stmt = mysqli_prepare($conn, $items_query);
-mysqli_stmt_bind_param($stmt, "s", $order_id);
-mysqli_stmt_execute($stmt);
-$items_result = mysqli_stmt_get_result($stmt);
-
 // Get specific order details based on order type
 $specific_details = [];
 if ($order['order_type'] == 'tailoring') {
@@ -58,6 +51,48 @@ if ($order['order_type'] == 'tailoring') {
     mysqli_stmt_bind_param($stmt, "s", $order_id);
     mysqli_stmt_execute($stmt);
     $specific_details = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+}
+
+// Replace lines 48-67 with this updated code
+// Get order items if applicable (depends on your database structure)
+$items_query = "";
+$items_result = false;
+
+// For tailoring orders
+if ($order['order_type'] == 'tailoring') {
+    // Instead of querying a separate items table, get data from the main order table
+    // or from the tailoring_orders table that we already have
+    if ($specific_details) {
+        // Create a single-row result using the data we already have
+        $item = [
+            'description' => $specific_details['garment_type'] ?? 'Tailoring Service',
+            'quantity' => $specific_details['quantity'] ?? 1,
+            'price' => $order['total_amount'],
+            'item_total' => $order['total_amount']
+        ];
+        
+        // Store the item data for later use in the table
+        $items_data = [$item];
+        $items_result = true;
+    }
+}
+// For sublimation orders 
+else if ($order['order_type'] == 'sublimation') {
+    // Instead of querying a separate items table, get data from the main order table
+    // or from the sublimation_orders table that we already have
+    if ($specific_details) {
+        // Create a single-row result using the data we already have
+        $item = [
+            'description' => $specific_details['printing_type'] ?? 'Sublimation Printing',
+            'quantity' => $specific_details['quantity'] ?? 1,
+            'price' => $order['total_amount'] / ($specific_details['quantity'] ?? 1),
+            'item_total' => $order['total_amount']
+        ];
+        
+        // Store the item data for later use in the table
+        $items_data = [$item];
+        $items_result = true;
+    }
 }
 
 // Format status for display
@@ -363,7 +398,7 @@ switch(strtolower($order['order_status'])) {
                     </button>
 
                     <ul class="navbar-nav ml-auto">
-                        <?php include 'notifications.php'; ?>
+                        <?php include 'notification.php'; ?>
 
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -533,8 +568,8 @@ switch(strtolower($order['order_status'])) {
                                                 $item_count = 1;
                                                 $subtotal = 0;
                                                 
-                                                if (mysqli_num_rows($items_result) > 0):
-                                                    while ($item = mysqli_fetch_assoc($items_result)): 
+                                                if ($items_result):
+                                                    foreach ($items_data as $item): 
                                                         $item_total = $item['quantity'] * $item['price'];
                                                         $subtotal += $item_total;
                                                 ?>
@@ -546,7 +581,7 @@ switch(strtolower($order['order_status'])) {
                                                     <td class="text-end">₱<?= number_format($item_total, 2) ?></td>
                                                 </tr>
                                                 <?php 
-                                                    endwhile; 
+                                                    endforeach; 
                                                 else:
                                                 ?>
                                                 <tr>
